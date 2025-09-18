@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
 	"time"
@@ -263,8 +265,9 @@ func getWeatherFromAPI(ctx context.Context, location string) (*WeatherResponse, 
 	}
 
 	// Make request to WeatherAPI
-	url := fmt.Sprintf("http://api.weatherapi.com/v1/current.json?key=%s&q=%s&aqi=no", weatherAPIKey, location)
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	apiURL := fmt.Sprintf("http://api.weatherapi.com/v1/current.json?key=%s&q=%s&aqi=no", weatherAPIKey, url.QueryEscape(location))
+	log.Printf("Making request to WeatherAPI: %s", apiURL)
+	req, err := http.NewRequestWithContext(ctx, "GET", apiURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -276,6 +279,13 @@ func getWeatherFromAPI(ctx context.Context, location string) (*WeatherResponse, 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		// Read response body for detailed error logging
+		body, readErr := io.ReadAll(resp.Body)
+		if readErr != nil {
+			log.Printf("WeatherAPI returned status %d, failed to read response body: %v", resp.StatusCode, readErr)
+		} else {
+			log.Printf("WeatherAPI returned status %d, response body: %s", resp.StatusCode, string(body))
+		}
 		return nil, fmt.Errorf("WeatherAPI returned status %d", resp.StatusCode)
 	}
 
