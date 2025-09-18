@@ -1,0 +1,80 @@
+version: 2
+updates:
+  # Go modules for Service A
+  - package-ecosystem: "gomod"
+    directory: "/service-a"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "lucasfeitozas"
+    assignees:
+      - "lucasfeitozas"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  # Go modules for Service B
+  - package-ecosystem: "gomod"
+    directory: "/service-b"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "lucasfeitozas"
+    assignees:
+      - "lucasfeitozas"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  # Docker images
+  - package-ecosystem: "docker"
+    directory: "/service-a"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "lucasfeitozas"
+    assignees:
+      - "lucasfeitozas"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+
+  - package-ecosystem: "docker"
+    directory: "/service-b"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "lucasfeitozas"
+    assignees:
+      - "lucasfeitozas"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "lucasfeitozas"
+    assignees:
+      - "lucasfeitozas"
+    commit-message:
+      prefix: "ci"
+      include: "scope"

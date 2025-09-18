@@ -80,6 +80,7 @@ func main() {
 	// Setup HTTP server with OpenTelemetry instrumentation
 	mux := http.NewServeMux()
 	mux.HandleFunc("/weather", handleWeather)
+	mux.HandleFunc("/health", handleHealth)
 
 	// Wrap the handler with OpenTelemetry instrumentation
 	handler := otelhttp.NewHandler(mux, "service-b")
@@ -319,6 +320,12 @@ func celsiusToFahrenheit(celsius float64) float64 {
 
 func celsiusToKelvin(celsius float64) float64 {
 	return celsius + 273.15
+}
+
+func handleHealth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"status":"ok"}`))
 }
 
 func writeErrorResponse(w http.ResponseWriter, message string, statusCode int) {

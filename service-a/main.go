@@ -45,7 +45,8 @@ func main() {
 
 	// Setup HTTP server with OpenTelemetry instrumentation
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", handleCEP)
+	mux.HandleFunc("/cep", handleCEP)
+	mux.HandleFunc("/health", handleHealth)
 
 	// Wrap the handler with OpenTelemetry instrumentation
 	handler := otelhttp.NewHandler(mux, "service-a")
@@ -188,6 +189,12 @@ func forwardToServiceB(ctx context.Context, cep string, w http.ResponseWriter) e
 	
 	_, err = w.Write(body)
 	return err
+}
+
+func handleHealth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"status":"ok"}`))
 }
 
 func writeErrorResponse(w http.ResponseWriter, message string, statusCode int) {
