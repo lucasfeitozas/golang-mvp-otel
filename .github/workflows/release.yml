@@ -58,7 +58,7 @@ jobs:
         CGO_ENABLED=0 GOOS=windows go build -a -installsuffix cgo -o service-b.exe .
 
     - name: Build and push Service A Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: ./service-a
         push: true
@@ -69,7 +69,7 @@ jobs:
         cache-to: type=gha,mode=max
 
     - name: Build and push Service B Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: ./service-b
         push: true

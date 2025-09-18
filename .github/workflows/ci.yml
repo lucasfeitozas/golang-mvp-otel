@@ -134,7 +134,7 @@ jobs:
           type=raw,value=latest,enable={{is_default_branch}}
 
     - name: Build and push Service A
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: ./service-a
         push: true
@@ -143,7 +143,7 @@ jobs:
         cache-to: type=gha,mode=max
 
     - name: Build and push Service B
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: ./service-b
         push: true
