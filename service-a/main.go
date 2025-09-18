@@ -187,14 +187,18 @@ func forwardToServiceB(ctx context.Context, cep string, w http.ResponseWriter) e
 		return fmt.Errorf("failed to read response body: %w", err)
 	}
 	
-	_, err = w.Write(body)
-	return err
+	if _, err = w.Write(body); err != nil {
+		return fmt.Errorf("failed to write response body: %w", err)
+	}
+	return nil
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status":"ok"}`))
+	if _, err := w.Write([]byte(`{"status":"ok"}`)); err != nil {
+		log.Printf("Failed to write health response: %v", err)
+	}
 }
 
 func writeErrorResponse(w http.ResponseWriter, message string, statusCode int) {
@@ -202,5 +206,7 @@ func writeErrorResponse(w http.ResponseWriter, message string, statusCode int) {
 	w.WriteHeader(statusCode)
 	
 	response := ErrorResponse{Message: message}
-	json.NewEncoder(w).Encode(response)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Failed to encode error response: %v", err)
+	}
 }

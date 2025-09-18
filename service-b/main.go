@@ -186,7 +186,9 @@ func handleWeather(w http.ResponseWriter, r *http.Request) {
 	// Return response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(weather)
+	if err := json.NewEncoder(w).Encode(weather); err != nil {
+		log.Printf("Failed to encode weather response: %v", err)
+	}
 }
 
 func isValidCEP(cep string) bool {
@@ -325,7 +327,9 @@ func celsiusToKelvin(celsius float64) float64 {
 func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status":"ok"}`))
+	if _, err := w.Write([]byte(`{"status":"ok"}`)); err != nil {
+		log.Printf("Failed to write health response: %v", err)
+	}
 }
 
 func writeErrorResponse(w http.ResponseWriter, message string, statusCode int) {
@@ -333,5 +337,7 @@ func writeErrorResponse(w http.ResponseWriter, message string, statusCode int) {
 	w.WriteHeader(statusCode)
 
 	response := ErrorResponse{Message: message}
-	json.NewEncoder(w).Encode(response)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Failed to encode error response: %v", err)
+	}
 }
